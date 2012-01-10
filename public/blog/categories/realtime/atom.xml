@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: RealTime | The Hitchhiker Principle]]></title>
+  <link href="http://thehitchhikerprinciple.com/blog/categories/realtime/atom.xml" rel="self"/>
+  <link href="http://thehitchhikerprinciple.com/"/>
+  <updated>2012-01-10T17:06:04+00:00</updated>
+  <id>http://thehitchhikerprinciple.com/</id>
+  <author>
+    <name><![CDATA[Richard Hooker]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Simple Chat With A Little PusherApp]]></title>
+    <link href="http://thehitchhikerprinciple.com/blog/2012/01/10/simple-chat-app-with-a-little-pusherapp/"/>
+    <updated>2012-01-10T16:50:00+00:00</updated>
+    <id>http://thehitchhikerprinciple.com/blog/2012/01/10/simple-chat-app-with-a-little-pusherapp</id>
+    <content type="html"><![CDATA[<h2>Goal</h2>
+
+<p>Make a Chat Application Where an admin user can chat to many users. The
+admin can also turn the chat off and on.</p>
+
+<h2>How</h2>
+
+<p>Use <a href="http://pusherapp.com">PusherApp</a> presence and private channels.</p>
+
+<p>``` ruby Discover if a number is prime http://www.noulakaz.net/weblog/2007/03/18/a-regular-expression-to-check-for-prime-numbers/ Source Article
+class Fixnum
+  def prime?</p>
+
+<pre><code>('1' * self) !~ /^1?$|^(11+?)\1+$/
+</code></pre>
+
+<p>  end
+end
+```</p>
+]]></content>
+  </entry>
+  
+</feed>

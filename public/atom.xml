@@ -4,7 +4,7 @@
   <title><![CDATA[The Hitchhiker Principle]]></title>
   <link href="http://thehitchhikerprinciple.com/atom.xml" rel="self"/>
   <link href="http://thehitchhikerprinciple.com/"/>
-  <updated>2012-01-10T15:20:12+00:00</updated>
+  <updated>2012-01-10T17:06:04+00:00</updated>
   <id>http://thehitchhikerprinciple.com/</id>
   <author>
     <name><![CDATA[Richard Hooker]]></name>
@@ -12,5 +12,34 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Simple Chat With A Little PusherApp]]></title>
+    <link href="http://thehitchhikerprinciple.com/blog/2012/01/10/simple-chat-app-with-a-little-pusherapp/"/>
+    <updated>2012-01-10T16:50:00+00:00</updated>
+    <id>http://thehitchhikerprinciple.com/blog/2012/01/10/simple-chat-app-with-a-little-pusherapp</id>
+    <content type="html"><![CDATA[<h2>Goal</h2>
+
+<p>Make a Chat Application Where an admin user can chat to many users. The
+admin can also turn the chat off and on.</p>
+
+<h2>How</h2>
+
+<p>Use <a href="http://pusherapp.com">PusherApp</a> presence and private channels.</p>
+
+<figure class='code'><figcaption><span>Discover if a number is prime </span><a href='http://www.noulakaz.net/weblog/2007/03/18/a-regular-expression-to-check-for-prime-numbers/'>Source Article</a></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Fixnum</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">prime?</span>
+</span><span class='line'>    <span class="p">(</span><span class="s1">&#39;1&#39;</span> <span class="o">*</span> <span class="nb">self</span><span class="p">)</span> <span class="o">!~</span> <span class="sr">/^1?$|^(11+?)\1+$/</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
 </feed>
