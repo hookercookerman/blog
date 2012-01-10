@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[The Hitchhiker Principle]]></title>
+  <link href="http://thehitchhikerprinciple.com/atom.xml" rel="self"/>
+  <link href="http://thehitchhikerprinciple.com/"/>
+  <updated>2012-01-10T15:20:12+00:00</updated>
+  <id>http://thehitchhikerprinciple.com/</id>
+  <author>
+    <name><![CDATA[Richard Hooker]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+</feed>
