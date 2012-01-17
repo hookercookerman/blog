@@ -4,7 +4,7 @@
   <title><![CDATA[Category: rails, | The Hitchhiker Principle]]></title>
   <link href="http://thehitchhikerprinciple.com/blog/categories/rails-/atom.xml" rel="self"/>
   <link href="http://thehitchhikerprinciple.com/"/>
-  <updated>2012-01-17T10:50:54+00:00</updated>
+  <updated>2012-01-17T10:56:32+00:00</updated>
   <id>http://thehitchhikerprinciple.com/</id>
   <author>
     <name><![CDATA[Richard Hooker]]></name>
@@ -48,11 +48,8 @@ roll; if you need reference there is the <a href="https://github.com/hookercooke
 <li>User class with an admin permission; A User has a chat channel</li>
 <li>Channel class to represent a chat channel; A chat channel belongs to a user</li>
 <li>Message class for sending messages on a channel; A message has a chat channel</li>
-<li>Setting class used for turning the chat on and off; One instance!</li>
 <li>None Admin user client side behaviour to send and receive messages.</li>
 <li>Admin user client side behaviour to chat to users.</li>
-<li>Admin ability to turn chat off and on; sending online users indicators
-of this action</li>
 </ul>
 
 

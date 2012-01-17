@@ -35,11 +35,8 @@ roll; if you need reference there is the [coding example here](https://github.co
 * User class with an admin permission; A User has a chat channel
 * Channel class to represent a chat channel; A chat channel belongs to a user
 * Message class for sending messages on a channel; A message has a chat channel
-* Setting class used for turning the chat on and off; One instance!
 * None Admin user client side behaviour to send and receive messages.
 * Admin user client side behaviour to chat to users.
-* Admin ability to turn chat off and on; sending online users indicators
-  of this action
 
 ### A Taster of the Coffescript ###
 
