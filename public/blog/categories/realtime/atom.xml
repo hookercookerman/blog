@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RealTime | The Hitchhiker Principle]]></title>
   <link href="http://thehitchhikerprinciple.com/blog/categories/realtime/atom.xml" rel="self"/>
   <link href="http://thehitchhikerprinciple.com/"/>
-  <updated>2012-01-10T17:06:04+00:00</updated>
+  <updated>2012-01-17T10:50:06+00:00</updated>
   <id>http://thehitchhikerprinciple.com/</id>
   <author>
     <name><![CDATA[Richard Hooker]]></name>
@@ -20,23 +20,199 @@
     <id>http://thehitchhikerprinciple.com/blog/2012/01/10/simple-chat-app-with-a-little-pusherapp</id>
     <content type="html"><![CDATA[<h2>Goal</h2>
 
-<p>Make a Chat Application Where an admin user can chat to many users. The
-admin can also turn the chat off and on.</p>
+<p>Make Chat client inside an existing application; where an admin can chat to many users. Only admins can chat to users.</p>
 
-<h2>How</h2>
+<p>you dont want to read all this crap you just want to see it running cool
+ok go <a href="http://pusher-simple-chat.herokuapp.com/">http://pusher-simple-chat.herokuapp.com/</a></p>
 
-<p>Use <a href="http://pusherapp.com">PusherApp</a> presence and private channels.</p>
+<p><img src="http://pusher-simple-chat.herokuapp.com/assets/example.png" alt="example" /></p>
 
-<p>``` ruby Discover if a number is prime http://www.noulakaz.net/weblog/2007/03/18/a-regular-expression-to-check-for-prime-numbers/ Source Article
-class Fixnum
-  def prime?</p>
+<p><a href="https://github.com/hookercookerman/simple-chat">You can found all the code to this example right here</a></p>
 
-<pre><code>('1' * self) !~ /^1?$|^(11+?)\1+$/
+<h2>Tools</h2>
+
+<p><a href="http://pusherapp.com">PusherApp</a> using the <a href="http://pusher.com/docs/client_api_guide/client_presence_events">presence channels</a> feature.</p>
+
+<h3>What is PusherApp and what are Presence Channels?</h3>
+
+<p>The docs at <a href="http://pusherapp.com">PusherApp</a> are very good please read them then come back here.</p>
+
+<h3>Setup</h3>
+
+<p>Lets pretend that we have a rails project setup and ready to rock and
+roll; if you need reference there is the <a href="https://github.com/hookercookerman/simple-chat">coding example here</a></p>
+
+<h3>The Guts</h3>
+
+<ul>
+<li>User class with an admin permission; A User has a chat channel</li>
+<li>Channel class to represent a chat channel; A chat channel belongs to a user</li>
+<li>Message class for sending messages on a channel; A message has a chat channel</li>
+<li>Setting class used for turning the chat on and off; One instance!</li>
+<li>None Admin user client side behaviour to send and receive messages.</li>
+<li>Admin user client side behaviour to chat to users.</li>
+<li>Admin ability to turn chat off and on; sending online users indicators
+of this action</li>
+</ul>
+
+
+<h3> A Taster of the Coffescript</h3>
+
+<p>``` coffeescript
+do ($ = jQuery) -><br/>
+  class ClientChat</p>
+
+<pre><code>@setup: (dev = true)-&gt;
+  Pusher.channel_auth_endpoint = '/chat/channel/auth';
+  if dev
+    Pusher.log = (message) -&gt;
+      if window.console &amp;&amp; window.console.log
+        window.console.log(message)
+    WEB_SOCKET_DEBUG = true 
+
+@scrollToBottom: =&gt;
+  $('#chat_messages').animate
+    'scrollTop' : $('#chat_messages')[0].scrollHeight
+
+constructor: (@pusherKey, @chat_id = "#chat") -&gt;
+  @adminReadyToChat = false;
+  @pusher = new Pusher(@pusherKey)
+  @pusher.connection.bind 'connected', @connected
+  @pusher.connection.bind 'disconnected', @disconnected
+
+  if $(@chat_id).length
+    @channel_name = $(@chat_id).attr("data-channel_name")
+    @channel = @pusher.subscribe @channel_name
+    @channel.bind "message", @receiveMessage
+    @channel.bind "pusher:member_added", @adminOnline
+    @channel.bind "pusher:member_removed", @adminOffline
+    @channel.bind "pusher:subscription_succeeded", @readyToChat
+
+readyToChat: (message) =&gt;
+  if message["count"] &gt; 1
+    $("#no_one_there").html("")
+  $.post "/chat/channel/activate", -&gt;
+
+attachMessageBehaviour: =&gt;
+  $("#new_message").append("&lt;input type='hidden' name='socket_id' value=#{@socket_id} /&gt;")
+  $("#new_message #message_body").keypress (e) -&gt;
+    if e.which is 13
+      $(@).focus()
+      $("#new_message").submit()
+      false
+
+  $("#new_message").bind "submit", -&gt;
+    if !$("#new_message #message_body").val()
+      false
+
+  $("#new_message").bind "ajax:success", (evt, data, status, xhr) =&gt;
+    data = JSON.parse(data)
+    $("#chat_messages").append("&lt;li class='message'&gt;
+      &lt;div class='sent'&gt;
+        &lt;img src=#{data['avatar_url']} width='50px' height='50px'/&gt;&lt;div class='display-name'&gt;Me, #{data["created_at"]}&lt;/div&gt;
+        &lt;div class='body'&gt;#{data["message"]}&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/li&gt;")
+    $("#new_message #message_body").val("")
+    ClientChat.scrollToBottom()
+
+adminOnline: (member) =&gt;
+  $("#no_one_there").html("")
+  $("#chat").show()
+  $("#chat_messages").css('opacity', 1)
+  $("#chat_messages").append("&lt;li class='message'&gt;&lt;div class='notice'&gt;&lt;img src=#{member['info']['avatar_url']} width='50px' height='50px'/&gt;#{member['info']['display_name']} is online to chat&lt;/div&gt;&lt;/li&gt;")
+  ClientChat.scrollToBottom()
+
+adminOffline: (member) =&gt;
+  $("#chat").show()
+  $("#chat_messages").css('opacity', 1)
+  $("#chat_messages").append("&lt;li class='message'&gt;&lt;div class='notice'&gt;&lt;img src=#{member['info']['avatar_url']} width='50px' height='50px'/&gt;#{member['info']['display_name']} is offfline &lt;/div&gt;&lt;/li&gt;")
+  ClientChat.scrollToBottom()
+
+subscriptionError:  (message = "Sorry chat is Dead")-&gt;
+  $("#chat_status_indicator").removeClass()
+  $("#chat_status_indicator").addClass("error")
+  $("#chat_messages").append("&lt;li class='message'&gt;&lt;div class='notice'&gt;#{message}&lt;/div&gt;&lt;/li&gt;")
+  ClientChat.scrollToBottom()
+
+receiveMessage: (message) -&gt;
+  if not $("#chat").is(":visible")
+    $("#chat").show()
+  $("#chat_messages").append("&lt;li class='message'&gt;
+    &lt;div class='received'&gt;
+      &lt;img src=#{message['avatar_url']} width='50px' height='50px'/&gt;&lt;div class='display-name'&gt;#{message['display_name']}, #{message["created_at"]}&lt;/div&gt;
+      &lt;div class='body'&gt;#{message["message"]}&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/li&gt;")
+  ClientChat.scrollToBottom()
+
+disconnected: (message) -&gt;
+  messageDom = $("&lt;li class='message'&gt;&lt;div class='notice'&gt;&lt;img src=#{message['avatar_url']} width='50px' height='50px'/&gt;#{message['message']}&lt;/div&gt;&lt;/li&gt;")
+  if $("#chat_messages")
+    $("#chat_messages").append(messageDom)
+    $("#chat_messages").css('opacity', 0.5)
+    ClientChat.scrollToBottom()
+
+connected: =&gt;
+  @socket_id = @pusher.connection.socket_id
+  @attachMessageBehaviour()
+</code></pre>
+
+<p>  $(document).ready -></p>
+
+<pre><code>if $("#chat").length
+  ClientChat.setup()
+  client = new ClientChat(PUSHER_KEY)
+
+if $('#chat_window').length
+  $('#chat_title').click () -&gt; 
+    $('#chat_container').slideToggle()
+    $(@).toggleClass('active')
+</code></pre>
+
+<p>```</p>
+
+<h2>What about testing ?</h2>
+
+<p>Ok here is a taster for example of an acceptance test for when a user
+gets a mesage from an admin</p>
+
+<p>```ruby
+require File.expand_path("../../acceptance_helper", <strong>FILE</strong>)</p>
+
+<p>feature "Chat" do
+  context "User is signed in" do</p>
+
+<pre><code>background  do
+  @user = FactoryGirl.create(:user, email:  "test@test.com", password: "testing123", password_confirmation: "testing123")
+  @user.chat_channel.start_chat!
+  sign_in(@user)
+end
+
+scenario "reciving a message from the admin", js: true do
+  save_and_open_page
+  page.execute_script(%Q(
+    Pusher.dispatch('#{@user.chat_channel.name}', 'message', {'display_name': 'Hookercookerman', 'message':'Just testing', 'channel_name' : '#{@user.chat_channel.name}'});
+  ))
+  page.should have_content("Just testing")
+  page.should have_content("Hookercookerman")
+end
 </code></pre>
 
 <p>  end
 end
 ```</p>
+
+<h2>Summary</h2>
+
+<p>Using pusherapp is super simple and it allows making any realtime app a
+breeze so give it a go;</p>
+
+<h2>Whats Next</h2>
+
+<p>Ok for next time I will attempt to give you custom twitter streams;
+What does that mean? I user can create stop and start twitter streams
+for various requirements i.e hastag milkandbeans.</p>
 ]]></content>
   </entry>
   

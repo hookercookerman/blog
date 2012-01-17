@@ -9,8 +9,7 @@
   <meta name="author" content="Richard Hooker">
 
   
-  <meta name="description" content="Goal Make a Chat Application Where an admin user can chat to many users. The
-admin can also turn the chat off and on. How Use PusherApp presence and &hellip;">
+  <meta name="description" content="Goal Make Chat client inside an existing application; where an admin can chat to many users. Only admins can chat to users. you dont want to read all &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -56,6 +55,7 @@ admin can also turn the chat off and on. How Use PusherApp presence and &hellip;
 </form>
   
 <ul class="main-navigation">
+  <li><a href="http://cv.thehitchhikerprinciple.com/">CV</a></li>
   <li><a href="/">Blog</a></li>
   <li><a href="/blog/archives">Archives</a></li>
 </ul>
@@ -93,25 +93,317 @@ admin can also turn the chat off and on. How Use PusherApp presence and &hellip;
 
 <div class="entry-content"><h2>Goal</h2>
 
-<p>Make a Chat Application Where an admin user can chat to many users. The
-admin can also turn the chat off and on.</p>
+<p>Make Chat client inside an existing application; where an admin can chat to many users. Only admins can chat to users.</p>
 
-<h2>How</h2>
+<p>you dont want to read all this crap you just want to see it running cool
+ok go <a href="http://pusher-simple-chat.herokuapp.com/">http://pusher-simple-chat.herokuapp.com/</a></p>
 
-<p>Use <a href="http://pusherapp.com">PusherApp</a> presence and private channels.</p>
+<p><img src="http://pusher-simple-chat.herokuapp.com/assets/example.png" alt="example" /></p>
 
-<figure class='code'><figcaption><span>Discover if a number is prime </span><a href='http://www.noulakaz.net/weblog/2007/03/18/a-regular-expression-to-check-for-prime-numbers/'>Source Article</a></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><a href="https://github.com/hookercookerman/simple-chat">You can found all the code to this example right here</a></p>
+
+<h2>Tools</h2>
+
+<p><a href="http://pusherapp.com">PusherApp</a> using the <a href="http://pusher.com/docs/client_api_guide/client_presence_events">presence channels</a> feature.</p>
+
+<h3>What is PusherApp and what are Presence Channels?</h3>
+
+<p>The docs at <a href="http://pusherapp.com">PusherApp</a> are very good please read them then come back here.</p>
+
+<h3>Setup</h3>
+
+<p>Lets pretend that we have a rails project setup and ready to rock and
+roll; if you need reference there is the <a href="https://github.com/hookercookerman/simple-chat">coding example here</a></p>
+
+<h3>The Guts</h3>
+
+<ul>
+<li>User class with an admin permission; A User has a chat channel</li>
+<li>Channel class to represent a chat channel; A chat channel belongs to a user</li>
+<li>Message class for sending messages on a channel; A message has a chat channel</li>
+<li>Setting class used for turning the chat on and off; One instance!</li>
+<li>None Admin user client side behaviour to send and receive messages.</li>
+<li>Admin user client side behaviour to chat to users.</li>
+<li>Admin ability to turn chat off and on; sending online users indicators
+of this action</li>
+</ul>
+
+
+<h3> A Taster of the Coffescript</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Fixnum</span>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">prime?</span>
-</span><span class='line'>    <span class="p">(</span><span class="s1">&#39;1&#39;</span> <span class="o">*</span> <span class="nb">self</span><span class="p">)</span> <span class="o">!~</span> <span class="sr">/^1?$|^(11+?)\1+$/</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nx">do</span> <span class="nf">($ = jQuery) -&gt;</span>
+</span><span class='line'>  <span class="k">class</span> <span class="nx">ClientChat</span>
+</span><span class='line'>    <span class="vi">@setup: </span><span class="nf">(dev = true)-&gt;</span>
+</span><span class='line'>      <span class="nv">Pusher.channel_auth_endpoint = </span><span class="s1">&#39;/chat/channel/auth&#39;</span><span class="p">;</span>
+</span><span class='line'>      <span class="k">if</span> <span class="nx">dev</span>
+</span><span class='line'>        <span class="nv">Pusher.log = </span><span class="nf">(message) -&gt;</span>
+</span><span class='line'>          <span class="k">if</span> <span class="nb">window</span><span class="p">.</span><span class="nx">console</span> <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="p">.</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span>
+</span><span class='line'>            <span class="nb">window</span><span class="p">.</span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span>
+</span><span class='line'>        <span class="nv">WEB_SOCKET_DEBUG = </span><span class="kc">true</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="vi">@scrollToBottom: </span><span class="o">=&gt;</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#chat_messages&#39;</span><span class="p">).</span><span class="nx">animate</span>
+</span><span class='line'>        <span class="s1">&#39;scrollTop&#39;</span> <span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#chat_messages&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">scrollHeight</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nv">constructor: </span><span class="nf">(@pusherKey, @chat_id = &quot;#chat&quot;) -&gt;</span>
+</span><span class='line'>      <span class="vi">@adminReadyToChat = </span><span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>      <span class="vi">@pusher = </span><span class="k">new</span> <span class="nx">Pusher</span><span class="p">(</span><span class="nx">@pusherKey</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">@pusher</span><span class="p">.</span><span class="nx">connection</span><span class="p">.</span><span class="nx">bind</span> <span class="s1">&#39;connected&#39;</span><span class="p">,</span> <span class="nx">@connected</span>
+</span><span class='line'>      <span class="nx">@pusher</span><span class="p">.</span><span class="nx">connection</span><span class="p">.</span><span class="nx">bind</span> <span class="s1">&#39;disconnected&#39;</span><span class="p">,</span> <span class="nx">@disconnected</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="nx">@chat_id</span><span class="p">).</span><span class="nx">length</span>
+</span><span class='line'>        <span class="vi">@channel_name = </span><span class="nx">$</span><span class="p">(</span><span class="nx">@chat_id</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s2">&quot;data-channel_name&quot;</span><span class="p">)</span>
+</span><span class='line'>        <span class="vi">@channel = </span><span class="nx">@pusher</span><span class="p">.</span><span class="nx">subscribe</span> <span class="nx">@channel_name</span>
+</span><span class='line'>        <span class="nx">@channel</span><span class="p">.</span><span class="nx">bind</span> <span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="nx">@receiveMessage</span>
+</span><span class='line'>        <span class="nx">@channel</span><span class="p">.</span><span class="nx">bind</span> <span class="s2">&quot;pusher:member_added&quot;</span><span class="p">,</span> <span class="nx">@adminOnline</span>
+</span><span class='line'>        <span class="nx">@channel</span><span class="p">.</span><span class="nx">bind</span> <span class="s2">&quot;pusher:member_removed&quot;</span><span class="p">,</span> <span class="nx">@adminOffline</span>
+</span><span class='line'>        <span class="nx">@channel</span><span class="p">.</span><span class="nx">bind</span> <span class="s2">&quot;pusher:subscription_succeeded&quot;</span><span class="p">,</span> <span class="nx">@readyToChat</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nv">readyToChat: </span><span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span><span class='line'>      <span class="k">if</span> <span class="nx">message</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span>
+</span><span class='line'>        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#no_one_there&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">.</span><span class="nx">post</span> <span class="s2">&quot;/chat/channel/activate&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nv">attachMessageBehaviour: </span><span class="o">=&gt;</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#new_message&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;&lt;input type=&#39;hidden&#39; name=&#39;socket_id&#39; value=#{@socket_id} /&gt;&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#new_message #message_body&quot;</span><span class="p">).</span><span class="nx">keypress</span> <span class="nf">(e) -&gt;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="nx">e</span><span class="p">.</span><span class="nx">which</span> <span class="o">is</span> <span class="mi">13</span>
+</span><span class='line'>          <span class="nx">$</span><span class="p">(</span><span class="err">@</span><span class="p">).</span><span class="nx">focus</span><span class="p">()</span>
+</span><span class='line'>          <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#new_message&quot;</span><span class="p">).</span><span class="nx">submit</span><span class="p">()</span>
+</span><span class='line'>          <span class="kc">false</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#new_message&quot;</span><span class="p">).</span><span class="nx">bind</span> <span class="s2">&quot;submit&quot;</span><span class="p">,</span> <span class="o">-&gt;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="o">!</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#new_message #message_body&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+</span><span class='line'>          <span class="kc">false</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#new_message&quot;</span><span class="p">).</span><span class="nx">bind</span> <span class="s2">&quot;ajax:success&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nx">evt</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">status</span><span class="p">,</span> <span class="nx">xhr</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span><span class='line'>        <span class="nv">data = </span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+</span><span class='line'>        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat_messages&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;&lt;li class=&#39;message&#39;&gt;</span>
+</span><span class='line'><span class="s2">          &lt;div class=&#39;sent&#39;&gt;</span>
+</span><span class='line'><span class="s2">            &lt;img src=#{data[&#39;avatar_url&#39;]} width=&#39;50px&#39; height=&#39;50px&#39;/&gt;&lt;div class=&#39;display-name&#39;&gt;Me, #{data[&quot;</span><span class="nx">created_at</span><span class="s2">&quot;]}&lt;/div&gt;</span>
+</span><span class='line'><span class="s2">            &lt;div class=&#39;body&#39;&gt;#{data[&quot;</span><span class="nx">message</span><span class="s2">&quot;]}&lt;/div&gt;</span>
+</span><span class='line'><span class="s2">          &lt;/div&gt;</span>
+</span><span class='line'><span class="s2">        &lt;/li&gt;&quot;</span><span class="p">)</span>
+</span><span class='line'>        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#new_message #message_body&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span class='line'>        <span class="nx">ClientChat</span><span class="p">.</span><span class="nx">scrollToBottom</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nv">adminOnline: </span><span class="p">(</span><span class="nx">member</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#no_one_there&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">()</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat_messages&quot;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;opacity&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat_messages&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;&lt;li class=&#39;message&#39;&gt;&lt;div class=&#39;notice&#39;&gt;&lt;img src=#{member[&#39;info&#39;][&#39;avatar_url&#39;]} width=&#39;50px&#39; height=&#39;50px&#39;/&gt;#{member[&#39;info&#39;][&#39;display_name&#39;]} is online to chat&lt;/div&gt;&lt;/li&gt;&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">ClientChat</span><span class="p">.</span><span class="nx">scrollToBottom</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nv">adminOffline: </span><span class="p">(</span><span class="nx">member</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">()</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat_messages&quot;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;opacity&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat_messages&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;&lt;li class=&#39;message&#39;&gt;&lt;div class=&#39;notice&#39;&gt;&lt;img src=#{member[&#39;info&#39;][&#39;avatar_url&#39;]} width=&#39;50px&#39; height=&#39;50px&#39;/&gt;#{member[&#39;info&#39;][&#39;display_name&#39;]} is offfline &lt;/div&gt;&lt;/li&gt;&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">ClientChat</span><span class="p">.</span><span class="nx">scrollToBottom</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nv">subscriptionError: </span> <span class="nf">(message = &quot;Sorry chat is Dead&quot;)-&gt;</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat_status_indicator&quot;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">()</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat_status_indicator&quot;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat_messages&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;&lt;li class=&#39;message&#39;&gt;&lt;div class=&#39;notice&#39;&gt;#{message}&lt;/div&gt;&lt;/li&gt;&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">ClientChat</span><span class="p">.</span><span class="nx">scrollToBottom</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nv">receiveMessage: </span><span class="nf">(message) -&gt;</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">not</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat&quot;</span><span class="p">).</span><span class="o">is</span><span class="p">(</span><span class="s2">&quot;:visible&quot;</span><span class="p">)</span>
+</span><span class='line'>        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat&quot;</span><span class="p">).</span><span class="nx">show</span><span class="p">()</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat_messages&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="s2">&quot;&lt;li class=&#39;message&#39;&gt;</span>
+</span><span class='line'><span class="s2">        &lt;div class=&#39;received&#39;&gt;</span>
+</span><span class='line'><span class="s2">          &lt;img src=#{message[&#39;avatar_url&#39;]} width=&#39;50px&#39; height=&#39;50px&#39;/&gt;&lt;div class=&#39;display-name&#39;&gt;#{message[&#39;display_name&#39;]}, #{message[&quot;</span><span class="nx">created_at</span><span class="s2">&quot;]}&lt;/div&gt;</span>
+</span><span class='line'><span class="s2">          &lt;div class=&#39;body&#39;&gt;#{message[&quot;</span><span class="nx">message</span><span class="s2">&quot;]}&lt;/div&gt;</span>
+</span><span class='line'><span class="s2">        &lt;/div&gt;</span>
+</span><span class='line'><span class="s2">      &lt;/li&gt;&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">ClientChat</span><span class="p">.</span><span class="nx">scrollToBottom</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nv">disconnected: </span><span class="nf">(message) -&gt;</span>
+</span><span class='line'>      <span class="nv">messageDom = </span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;&lt;li class=&#39;message&#39;&gt;&lt;div class=&#39;notice&#39;&gt;&lt;img src=#{message[&#39;avatar_url&#39;]} width=&#39;50px&#39; height=&#39;50px&#39;/&gt;#{message[&#39;message&#39;]}&lt;/div&gt;&lt;/li&gt;&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat_messages&quot;</span><span class="p">)</span>
+</span><span class='line'>        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat_messages&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">messageDom</span><span class="p">)</span>
+</span><span class='line'>        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat_messages&quot;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s1">&#39;opacity&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+</span><span class='line'>        <span class="nx">ClientChat</span><span class="p">.</span><span class="nx">scrollToBottom</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nv">connected: </span><span class="o">=&gt;</span>
+</span><span class='line'>      <span class="vi">@socket_id = </span><span class="nx">@pusher</span><span class="p">.</span><span class="nx">connection</span><span class="p">.</span><span class="nx">socket_id</span>
+</span><span class='line'>      <span class="nx">@attachMessageBehaviour</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span> <span class="o">-&gt;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#chat&quot;</span><span class="p">).</span><span class="nx">length</span>
+</span><span class='line'>      <span class="nx">ClientChat</span><span class="p">.</span><span class="nx">setup</span><span class="p">()</span>
+</span><span class='line'>      <span class="nv">client = </span><span class="k">new</span> <span class="nx">ClientChat</span><span class="p">(</span><span class="nx">PUSHER_KEY</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#chat_window&#39;</span><span class="p">).</span><span class="nx">length</span>
+</span><span class='line'>      <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#chat_title&#39;</span><span class="p">).</span><span class="nx">click</span> <span class="nf">() -&gt;</span>
+</span><span class='line'>        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#chat_container&#39;</span><span class="p">).</span><span class="nx">slideToggle</span><span class="p">()</span>
+</span><span class='line'>        <span class="nx">$</span><span class="p">(</span><span class="err">@</span><span class="p">).</span><span class="nx">toggleClass</span><span class="p">(</span><span class="s1">&#39;active&#39;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>What about testing ?</h2>
+
+<p>Ok here is a taster for example of an acceptance test for when a user
+gets a mesage from an admin</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;../../acceptance_helper&quot;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">feature</span> <span class="s2">&quot;Chat&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">context</span> <span class="s2">&quot;User is signed in&quot;</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">background</span>  <span class="k">do</span>
+</span><span class='line'>      <span class="vi">@user</span> <span class="o">=</span> <span class="no">FactoryGirl</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="ss">:user</span><span class="p">,</span> <span class="n">email</span><span class="p">:</span>  <span class="s2">&quot;test@test.com&quot;</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="s2">&quot;testing123&quot;</span><span class="p">,</span> <span class="n">password_confirmation</span><span class="p">:</span> <span class="s2">&quot;testing123&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="vi">@user</span><span class="o">.</span><span class="n">chat_channel</span><span class="o">.</span><span class="n">start_chat!</span>
+</span><span class='line'>      <span class="n">sign_in</span><span class="p">(</span><span class="vi">@user</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">scenario</span> <span class="s2">&quot;reciving a message from the admin&quot;</span><span class="p">,</span> <span class="n">js</span><span class="p">:</span> <span class="kp">true</span> <span class="k">do</span>
+</span><span class='line'>      <span class="n">save_and_open_page</span>
+</span><span class='line'>      <span class="n">page</span><span class="o">.</span><span class="n">execute_script</span><span class="p">(</span><span class="sx">%Q(</span>
+</span><span class='line'><span class="sx">        Pusher.dispatch(&#39;</span><span class="si">#{</span><span class="vi">@user</span><span class="o">.</span><span class="n">chat_channel</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="sx">&#39;, &#39;message&#39;, {&#39;display_name&#39;: &#39;Hookercookerman&#39;, &#39;message&#39;:&#39;Just testing&#39;, &#39;channel_name&#39; : &#39;</span><span class="si">#{</span><span class="vi">@user</span><span class="o">.</span><span class="n">chat_channel</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="sx">&#39;});</span>
+</span><span class='line'><span class="sx">      )</span><span class="p">)</span>
+</span><span class='line'>      <span class="n">page</span><span class="o">.</span><span class="n">should</span> <span class="n">have_content</span><span class="p">(</span><span class="s2">&quot;Just testing&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="n">page</span><span class="o">.</span><span class="n">should</span> <span class="n">have_content</span><span class="p">(</span><span class="s2">&quot;Hookercookerman&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
 </span><span class='line'>  <span class="k">end</span>
 </span><span class='line'><span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<h2>Summary</h2>
+
+<p>Using pusherapp is super simple and it allows making any realtime app a
+breeze so give it a go;</p>
+
+<h2>Whats Next</h2>
+
+<p>Ok for next time I will attempt to give you custom twitter streams;
+What does that mean? I user can create stop and start twitter streams
+for various requirements i.e hastag milkandbeans.</p>
 </div>
 
 
