@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: mobile, | The Hitchhiker Principle]]></title>
+  <link href="http://thehitchhikerprinciple.com/blog/categories/mobile-/atom.xml" rel="self"/>
+  <link href="http://thehitchhikerprinciple.com/"/>
+  <updated>2012-01-30T15:09:42+00:00</updated>
+  <id>http://thehitchhikerprinciple.com/</id>
+  <author>
+    <name><![CDATA[Richard Hooker]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Getting BatmanJs to play with Appcelerator Titanium]]></title>
+    <link href="http://thehitchhikerprinciple.com/blog/2012/01/30/getting-batmanjs-to-play-with-appcelerator-titanium/"/>
+    <updated>2012-01-30T14:43:00+00:00</updated>
+    <id>http://thehitchhikerprinciple.com/blog/2012/01/30/getting-batmanjs-to-play-with-appcelerator-titanium</id>
+    <content type="html"><![CDATA[<p>Its true I am now full time working with <a href="http://www.appcelerator.com/">Appcelerator</a>;</p>
+
+<p>Whilst I am going through the pain of learning any new framework is kind
+of well painful; I wanted to use my <a href="http://batmanjs.org/">BatmanJs</a>
+models that I have created on the web side of things so I wanted to get
+Batman to play nice in the titanium world; So Rich what did you do?</p>
+
+<h2>BatmanJs</h2>
+
+<p>What is BatmanJs? its a Javascript library with some very nice
+bindings for the cool kids that want that thing; It has a sweet DSL
+which is main reason for using it; its just nice to use; it feels right.</p>
+
+<p>Whilst batmanjs does really lack docs you can go into their test suit
+and hunt around; this is not ideal but it does give you alot of
+information. But have a look yourselves.</p>
+
+<h2>Cut And Paste</h2>
+
+<p>At present their is no seperation of batmanjs main source file; like
+you would see in <a href="http://emberjs.com/">Emberjs</a> for instance.
+So at the minute I am being lame and basically cutting out all the
+DOM and Navigation functionality that I dont need form the main batman.coffee file.</p>
+
+<h2>Main Js File</h2>
+
+<p>There is normally one main JS file that you have to bootstrap stuff in
+titanium; this is what mine looks like for batman stuff</p>
+
+<p><code>coffeescript
+  global = @ # needed to batman can play in commonjs world
+  App = {} # Bad but we need a namespace for Batman models
+  Batman = require "/vendor/batman.titanium"
+  Batman.currentApp = App
+</code></p>
+
+<p>What you do need is use a namespace as we are not going to be using
+Batman App and creating an instance that as it does not make sense in
+titanium world to be using the boostrapping of that class;</p>
+
+<h2>Request Using Titanium</h2>
+
+<p>I done the basics to get this to work so I am sure I need to tweak a few
+things; like handling different status as Titanium only give you
+one hook onload no complete or success;</p>
+
+<p>```coffeescript
+applyExtra = (Batman) -></p>
+
+<p>  # <code>param</code> and <code>buildParams</code> stolen from jQuery
+  #
+  # jQuery JavaScript Library v1.6.1
+  # http://jquery.com/
+  #
+  # Copyright 2011, John Resig
+  # Dual licensed under the MIT or GPL Version 2 licenses.
+  # http://jquery.org/license
+  rbracket = /[]$/
+  r20 = /%20/g
+  param = (a) -></p>
+
+<pre><code>return a if typeof a is 'string'
+s = []
+add = (key, value) -&gt;
+  value = value() if typeof value is 'function'
+  s[s.length] = encodeURIComponent(key) + "=" + encodeURIComponent(value)
+
+if Batman.typeOf(a) is 'Array'
+  for value, name of a
+    add name, value
+else
+  for own k, v of a
+    buildParams k, v, add
+s.join("&amp;").replace r20, "+"
+</code></pre>
+
+<p>  buildParams = (prefix, obj, add) -></p>
+
+<pre><code>if Batman.typeOf(obj) is 'Array'
+  for v, i in obj
+    if rbracket.test(prefix)
+      add prefix, v
+    else
+      buildParams prefix + "[" + (if typeof v == "object" or Batman.typeOf(v) is 'Array' then i else "") + "]", v, add
+else if obj? and typeof obj == "object"
+  for name of obj
+    buildParams prefix + "[" + name + "]", obj[name], add
+else
+  add prefix, obj
+</code></pre>
+
+<p>  Batman.Request::send = (data) -></p>
+
+<pre><code>data ?= @get('data')
+@fire 'loading'
+
+options =
+  url: @get 'url'
+  method: @get 'method'
+  type: @get 'type'
+  headers: @get 'headers'
+
+  # aka success
+  onload: (response) =&gt;
+    @set 'response', xhr.responseText
+    @set 'status', (xhr?.status or 200)
+    @fire 'success', xhr.responseText
+    @fire 'loaded'
+
+  # have to wait to see if this fits basically
+  onerror: (error) =&gt;
+    @set 'response', xhr.responseText || xhr.content
+    @set 'status', xhr.status
+    @fire 'error', error
+
+unless @get('formData')
+  options.headers['Content-type'] = @get('contentType')
+
+if options.method in ['PUT', 'POST']
+  if @get('formData')
+    options.data = @constructor.objectToFormData(data)
+  else
+    options.data = param(data)
+else if options.method is 'GET' and (params = param(data))
+  options.url += "?#{params}"
+
+# Fires the request. Grab a reference to the xhr object so we can get the status code elsewhere.
+client = Ti.Network.createHTTPClient(options)
+client.open(options.method, options.url)
+client.send()
+xhr = client
+</code></pre>
+
+<p>if (module? &amp;&amp; require?)
+  module.exports = applyExtra
+else
+  applyExtra(Batman)
+```</p>
+
+<h2>Last Bit</h2>
+
+<p>At the end of the batman.titanium.coffee aka the main file I just add
+the request</p>
+
+<p><code>coffeescript
+  (require "vendor/batman.titanium_request")(Batman)
+</code></p>
+
+<p>then Disco you are ready to Rock and Roll with Batman;</p>
+
+<p><code>coffeescript
+CurrentUser = new App.User()
+CurrentUser.url = "http://#{HOST}/users/current"
+CurrentUser.load (err) -&gt; throw err if err
+CurrentUser.on "loaded", =&gt;
+  win = ApplicationWindow()
+  win.open()
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,530 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Getting BatmanJs to play with Appcelerator Titanium - The Hitchhiker Principle</title>
+  <meta name="author" content="Richard Hooker">
+
+  
+  <meta name="description" content="Its true I am now full time working with Appcelerator; Whilst I am going through the pain of learning any new framework is kind
+of well painful; I &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://thehitchhikerprinciple.com/blog/2012/01/30/getting-batmanjs-to-play-with-appcelerator-titanium">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="The Hitchhiker Principle" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">The Hitchhiker Principle</a></h1>
+  
+    <h2>Ruby is my Weapon; The Web is my playground;</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:thehitchhikerprinciple.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="http://cv.thehitchhikerprinciple.com/">CV</a></li>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Getting BatmanJs to Play With Appcelerator Titanium</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-01-30T14:43:00+00:00" pubdate data-updated="true">Jan 30<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Its true I am now full time working with <a href="http://www.appcelerator.com/">Appcelerator</a>;</p>
+
+<p>Whilst I am going through the pain of learning any new framework is kind
+of well painful; I wanted to use my <a href="http://batmanjs.org/">BatmanJs</a>
+models that I have created on the web side of things so I wanted to get
+Batman to play nice in the titanium world; So Rich what did you do?</p>
+
+<h2>BatmanJs</h2>
+
+<p>What is BatmanJs? its a Javascript library with some very nice
+bindings for the cool kids that want that thing; It has a sweet DSL
+which is main reason for using it; its just nice to use; it feels right.</p>
+
+<p>Whilst batmanjs does really lack docs you can go into their test suit
+and hunt around; this is not ideal but it does give you alot of
+information. But have a look yourselves.</p>
+
+<h2>Cut And Paste</h2>
+
+<p>At present their is no seperation of batmanjs main source file; like
+you would see in <a href="http://emberjs.com/">Emberjs</a> for instance.
+So at the minute I am being lame and basically cutting out all the
+DOM and Navigation functionality that I dont need form the main batman.coffee file.</p>
+
+<h2>Main Js File</h2>
+
+<p>There is normally one main JS file that you have to bootstrap stuff in
+titanium; this is what mine looks like for batman stuff</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'>  <span class="nv">global = </span><span class="err">@</span> <span class="c1"># needed to batman can play in commonjs world </span>
+</span><span class='line'>  <span class="nv">App = </span><span class="p">{}</span> <span class="c1"># Bad but we need a namespace for Batman models</span>
+</span><span class='line'>  <span class="nv">Batman = </span><span class="nx">require</span> <span class="s2">&quot;/vendor/batman.titanium&quot;</span>
+</span><span class='line'>  <span class="nv">Batman.currentApp = </span><span class="nx">App</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What you do need is use a namespace as we are not going to be using
+Batman App and creating an instance that as it does not make sense in
+titanium world to be using the boostrapping of that class;</p>
+
+<h2>Request Using Titanium</h2>
+
+<p>I done the basics to get this to work so I am sure I need to tweak a few
+things; like handling different status as Titanium only give you
+one hook onload no complete or success;</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">applyExtra = </span><span class="nf">(Batman) -&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1"># `param` and `buildParams` stolen from jQuery</span>
+</span><span class='line'>  <span class="c1">#</span>
+</span><span class='line'>  <span class="c1"># jQuery JavaScript Library v1.6.1</span>
+</span><span class='line'>  <span class="c1"># http://jquery.com/</span>
+</span><span class='line'>  <span class="c1">#</span>
+</span><span class='line'>  <span class="c1"># Copyright 2011, John Resig</span>
+</span><span class='line'>  <span class="c1"># Dual licensed under the MIT or GPL Version 2 licenses.</span>
+</span><span class='line'>  <span class="c1"># http://jquery.org/license</span>
+</span><span class='line'>  <span class="nv">rbracket = </span><span class="sr">/\[\]$/</span>
+</span><span class='line'>  <span class="nv">r20 = </span><span class="sr">/%20/g</span>
+</span><span class='line'>  <span class="nv">param = </span><span class="nf">(a) -&gt;</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">a</span> <span class="k">if</span> <span class="k">typeof</span> <span class="nx">a</span> <span class="o">is</span> <span class="s1">&#39;string&#39;</span>
+</span><span class='line'>    <span class="nv">s = </span><span class="p">[]</span>
+</span><span class='line'>    <span class="nv">add = </span><span class="nf">(key, value) -&gt;</span>
+</span><span class='line'>      <span class="nv">value = </span><span class="nx">value</span><span class="p">()</span> <span class="k">if</span> <span class="k">typeof</span> <span class="nx">value</span> <span class="o">is</span> <span class="s1">&#39;function&#39;</span>
+</span><span class='line'>      <span class="nx">s</span><span class="p">[</span><span class="nx">s</span><span class="p">.</span><span class="nx">length</span><span class="p">]</span> <span class="o">=</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">typeOf</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="o">is</span> <span class="s1">&#39;Array&#39;</span>
+</span><span class='line'>      <span class="k">for</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">name</span> <span class="k">of</span> <span class="nx">a</span>
+</span><span class='line'>        <span class="nx">add</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">value</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="k">for</span> <span class="nx">own</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">a</span>
+</span><span class='line'>        <span class="nx">buildParams</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">add</span>
+</span><span class='line'>    <span class="nx">s</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;&amp;&quot;</span><span class="p">).</span><span class="nx">replace</span> <span class="nx">r20</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nv">buildParams = </span><span class="nf">(prefix, obj, add) -&gt;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">typeOf</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="o">is</span> <span class="s1">&#39;Array&#39;</span>
+</span><span class='line'>      <span class="k">for</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">obj</span>
+</span><span class='line'>        <span class="k">if</span> <span class="nx">rbracket</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">prefix</span><span class="p">)</span>
+</span><span class='line'>          <span class="nx">add</span> <span class="nx">prefix</span><span class="p">,</span> <span class="nx">v</span>
+</span><span class='line'>        <span class="k">else</span>
+</span><span class='line'>          <span class="nx">buildParams</span> <span class="nx">prefix</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="p">(</span><span class="k">if</span> <span class="k">typeof</span> <span class="nx">v</span> <span class="o">==</span> <span class="s2">&quot;object&quot;</span> <span class="o">or</span> <span class="nx">Batman</span><span class="p">.</span><span class="nx">typeOf</span><span class="p">(</span><span class="nx">v</span><span class="p">)</span> <span class="o">is</span> <span class="s1">&#39;Array&#39;</span> <span class="k">then</span> <span class="nx">i</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">add</span>
+</span><span class='line'>    <span class="k">else</span> <span class="k">if</span> <span class="nx">obj</span><span class="o">?</span> <span class="o">and</span> <span class="k">typeof</span> <span class="nx">obj</span> <span class="o">==</span> <span class="s2">&quot;object&quot;</span>
+</span><span class='line'>      <span class="k">for</span> <span class="nx">name</span> <span class="k">of</span> <span class="nx">obj</span>
+</span><span class='line'>        <span class="nx">buildParams</span> <span class="nx">prefix</span> <span class="o">+</span> <span class="s2">&quot;[&quot;</span> <span class="o">+</span> <span class="nx">name</span> <span class="o">+</span> <span class="s2">&quot;]&quot;</span><span class="p">,</span> <span class="nx">obj</span><span class="p">[</span><span class="nx">name</span><span class="p">],</span> <span class="nx">add</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="nx">add</span> <span class="nx">prefix</span><span class="p">,</span> <span class="nx">obj</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nv">Batman.Request::send = </span><span class="nf">(data) -&gt;</span>
+</span><span class='line'>    <span class="nx">data</span> <span class="o">?=</span> <span class="nx">@get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="nx">@fire</span> <span class="s1">&#39;loading&#39;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nv">options =</span>
+</span><span class='line'>      <span class="nv">url: </span><span class="nx">@get</span> <span class="s1">&#39;url&#39;</span>
+</span><span class='line'>      <span class="nv">method: </span><span class="nx">@get</span> <span class="s1">&#39;method&#39;</span>
+</span><span class='line'>      <span class="nv">type: </span><span class="nx">@get</span> <span class="s1">&#39;type&#39;</span>
+</span><span class='line'>      <span class="nv">headers: </span><span class="nx">@get</span> <span class="s1">&#39;headers&#39;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1"># aka success</span>
+</span><span class='line'>      <span class="nv">onload: </span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span><span class='line'>        <span class="nx">@set</span> <span class="s1">&#39;response&#39;</span><span class="p">,</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">responseText</span>
+</span><span class='line'>        <span class="nx">@set</span> <span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">xhr</span><span class="o">?</span><span class="p">.</span><span class="nx">status</span> <span class="o">or</span> <span class="mi">200</span><span class="p">)</span>
+</span><span class='line'>        <span class="nx">@fire</span> <span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">responseText</span>
+</span><span class='line'>        <span class="nx">@fire</span> <span class="s1">&#39;loaded&#39;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1"># have to wait to see if this fits basically</span>
+</span><span class='line'>      <span class="nv">onerror: </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span><span class='line'>        <span class="nx">@set</span> <span class="s1">&#39;response&#39;</span><span class="p">,</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">responseText</span> <span class="o">||</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">content</span>
+</span><span class='line'>        <span class="nx">@set</span> <span class="s1">&#39;status&#39;</span><span class="p">,</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">status</span>
+</span><span class='line'>        <span class="nx">@fire</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="nx">error</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">unless</span> <span class="nx">@get</span><span class="p">(</span><span class="s1">&#39;formData&#39;</span><span class="p">)</span>
+</span><span class='line'>      <span class="nx">options</span><span class="p">.</span><span class="nx">headers</span><span class="p">[</span><span class="s1">&#39;Content-type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">@get</span><span class="p">(</span><span class="s1">&#39;contentType&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="nx">options</span><span class="p">.</span><span class="nx">method</span> <span class="k">in</span> <span class="p">[</span><span class="s1">&#39;PUT&#39;</span><span class="p">,</span> <span class="s1">&#39;POST&#39;</span><span class="p">]</span>
+</span><span class='line'>      <span class="k">if</span> <span class="nx">@get</span><span class="p">(</span><span class="s1">&#39;formData&#39;</span><span class="p">)</span>
+</span><span class='line'>        <span class="nv">options.data = </span><span class="nx">@constructor</span><span class="p">.</span><span class="nx">objectToFormData</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">else</span>
+</span><span class='line'>        <span class="nv">options.data = </span><span class="nx">param</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">else</span> <span class="k">if</span> <span class="nx">options</span><span class="p">.</span><span class="nx">method</span> <span class="o">is</span> <span class="s1">&#39;GET&#39;</span> <span class="o">and</span> <span class="p">(</span><span class="nv">params = </span><span class="nx">param</span><span class="p">(</span><span class="nx">data</span><span class="p">))</span>
+</span><span class='line'>      <span class="nx">options</span><span class="p">.</span><span class="nx">url</span> <span class="o">+=</span> <span class="s2">&quot;?#{params}&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1"># Fires the request. Grab a reference to the xhr object so we can get the status code elsewhere.</span>
+</span><span class='line'>    <span class="nv">client = </span><span class="nx">Ti</span><span class="p">.</span><span class="nx">Network</span><span class="p">.</span><span class="nx">createHTTPClient</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span>
+</span><span class='line'>    <span class="nx">client</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">method</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">url</span><span class="p">)</span>
+</span><span class='line'>    <span class="nx">client</span><span class="p">.</span><span class="nx">send</span><span class="p">()</span>
+</span><span class='line'>    <span class="nv">xhr = </span><span class="nx">client</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">module</span><span class="o">?</span> <span class="o">&amp;&amp;</span> <span class="nx">require</span><span class="o">?</span><span class="p">)</span>
+</span><span class='line'>  <span class="nv">module.exports = </span><span class="nx">applyExtra</span>
+</span><span class='line'><span class="k">else</span>
+</span><span class='line'>  <span class="nx">applyExtra</span><span class="p">(</span><span class="nx">Batman</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Last Bit</h2>
+
+<p>At the end of the batman.titanium.coffee aka the main file I just add
+the request</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'>  <span class="p">(</span><span class="nx">require</span> <span class="s2">&quot;vendor/batman.titanium_request&quot;</span><span class="p">)(</span><span class="nx">Batman</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>then Disco you are ready to Rock and Roll with Batman;</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='coffeescript'><span class='line'><span class="nv">CurrentUser = </span><span class="k">new</span> <span class="nx">App</span><span class="p">.</span><span class="nx">User</span><span class="p">()</span>
+</span><span class='line'><span class="nv">CurrentUser.url = </span><span class="s2">&quot;http://#{HOST}/users/current&quot;</span>
+</span><span class='line'><span class="nx">CurrentUser</span><span class="p">.</span><span class="nx">load</span> <span class="nf">(err) -&gt;</span> <span class="k">throw</span> <span class="nx">err</span> <span class="k">if</span> <span class="nx">err</span>
+</span><span class='line'><span class="nx">CurrentUser</span><span class="p">.</span><span class="kc">on</span> <span class="s2">&quot;loaded&quot;</span><span class="p">,</span> <span class="o">=&gt;</span>
+</span><span class='line'>  <span class="nv">win = </span><span class="nx">ApplicationWindow</span><span class="p">()</span>
+</span><span class='line'>  <span class="nx">win</span><span class="p">.</span><span class="nx">open</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Richard Hooker</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-01-30T14:43:00+00:00" pubdate data-updated="true">Jan 30<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/batmanjs/'>batmanjs</a>, <a class='category' href='/blog/categories/javascript-/'>javascript,</a>, <a class='category' href='/blog/categories/mobile-/'>mobile,</a>, <a class='category' href='/blog/categories/titanium-/'>titanium,</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://thehitchhikerprinciple.com/blog/2012/01/30/getting-batmanjs-to-play-with-appcelerator-titanium/" data-via="hookercookerman" data-counturl="http://thehitchhikerprinciple.com/blog/2012/01/30/getting-batmanjs-to-play-with-appcelerator-titanium/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/01/10/simple-chat-app-with-a-little-pusherapp/" title="Previous Post: Simple Chat With A Little PusherApp">&laquo; Simple Chat With A Little PusherApp</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/01/30/getting-batmanjs-to-play-with-appcelerator-titanium/">Getting BatmanJs to play with Appcelerator Titanium</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/01/10/simple-chat-app-with-a-little-pusherapp/">Simple Chat With A Little PusherApp</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Github Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/hookercookerman">@hookercookerman</a> on Github
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'hookercookerman',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("hookercookerman", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/hookercookerman" class="twitter-follow-button" data-show-count="false">Follow @hookercookerman</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Richard Hooker -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'thehitchhikerprinciple';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://thehitchhikerprinciple.com/blog/2012/01/30/getting-batmanjs-to-play-with-appcelerator-titanium/';
+        var disqus_url = 'http://thehitchhikerprinciple.com/blog/2012/01/30/getting-batmanjs-to-play-with-appcelerator-titanium/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
